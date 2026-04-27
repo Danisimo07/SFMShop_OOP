@@ -1,5 +1,5 @@
 """
-Создаём экземпляр класса
+Создаём родительский класс
 """
 class Product:
     def __init__(self, name, price, discount_rate):
