@@ -1,12 +1,12 @@
 from models.product import Product
-from models.user import User
+# from models.user import User
 
 class Order:
-    def __init__(self, user: str, products: str, order_id: int, total: int):
+    def __init__(self, user: str, products: list[Product], order_id: int):
         self.user = user
         self.products = products
         self.order_id = order_id
-        self.total = total
+        self.total = self.calculate_total()
 
 
     def __str__(self):
@@ -22,6 +22,13 @@ class Order:
         for product in self.products:
             total += product.get_total_price()
         return total
+
+
+    def get_product(self, product_name):
+        for product in self.products:
+            if product == product_name:
+                return product
+        raise KeyError("Товар не найден")
 
 
 # # Создаём пользователя

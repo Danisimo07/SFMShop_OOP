@@ -1,6 +1,10 @@
 class Product:
     def __init__(self, name, price, quantity):
         self.name = name
+
+        if price < 0:
+            raise ValueError("Цена не может быть отрицательной")
+
         self.price = price
         self.quantity = quantity
 

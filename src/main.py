@@ -1,26 +1,28 @@
+from models.user import User
 from models.product import Product
 from models.order import Order
 
 
-products = [
-    Product("iPhone 15 Pro", 120000, 1),
-    Product("Samsung S24 Ultra", 95000, 2),
-    Product("iPhone 14", 80000, 1),
-    Product("Xiaomi 14", 65000, 1),
-    Product("Google Pixel 8", 75000, 5)
-]
-
-products.sort()
-for product in products:
-    print(f"Товар: {product.name}; Цена: {product.price} руб.; Количество: {product.quantity}")
+try:
+    product1 = Product("Ноутбук", -50000, 1)
+except ValueError as e:
+    print(e)
 
 
-# Проверка заказа
-p1 = Product('Samsung S24 Ultra', 80000, 5)
-p2 = Product('Samsung S24 Ultra', 95000, 2)
-print(f"\np1 < p2: {p1<p2}")
+try:
+    user1 = User("Иван", "ivanmail.ru")
+except ValueError as e:
+    print(e)
 
 
-# Создание заказа
-order = Order(order_id=123, products='Samsung S24 Ultra', total=250000, user="Иван Иванов")
-print(f"\n{order}")
+try:
+    product2 = Product("Мышь", 1500, 2)
+    product3 = Product("Клавиатура", 3000, 1)
+    user2 = User("Пётр", "petr@mail.ru")
+
+    order = Order(user2, [product2, product3], 123)
+    print(order)
+
+    print(order.get_product("Монитор"))
+except KeyError as e:
+    print(e)
