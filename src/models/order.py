@@ -2,9 +2,19 @@ from models.product import Product
 from models.user import User
 
 class Order:
-    def __init__(self, user, products):
+    def __init__(self, user: str, products: str, order_id: int, total: int):
         self.user = user
         self.products = products
+        self.order_id = order_id
+        self.total = total
+
+
+    def __str__(self):
+        return f"Заказ #{self.order_id} на сумму {self.total} руб. (Пользователь: {self.user})"
+
+
+    def __repr__(self):
+        return f"Order(order_id='{self.order_id}', total='{self.total}', user='{self.user}')"
 
 
     def calculate_total(self):
