@@ -1,12 +1,30 @@
+from models.exceptions import NegativePriceError, InsufficientStockError
+
+
 class Product:
     def __init__(self, name, price, quantity):
         self.name = name
 
         if price < 0:
-            raise ValueError("Цена не может быть отрицательной")
+            raise NegativePriceError("Цена не может быть отрицательной")
+
+        if quantity < 0:
+            raise NegativePriceError
 
         self.price = price
         self.quantity = quantity
+
+
+    def reserve_stock(self, requested_quantity: int):
+        """Резервирует количество товара"""
+        if requested_quantity > self.quantity:
+            raise InsufficientStockError(
+                self.name,
+                self.quantity,
+                requested_quantity
+            )
+
+        self.quantity -= requested_quantity
 
 
     def __lt__(self, other):

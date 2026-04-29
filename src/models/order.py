@@ -1,8 +1,21 @@
+from models.exceptions import InvalidOrderError
 from models.product import Product
 # from models.user import User
 
 class Order:
     def __init__(self, user: str, products: list[Product], order_id: int):
+        """Инициализация заказов с полной валидацией"""
+        if not user or len(user.strip()) == 0:
+            raise InvalidOrderError("Пользователь обязателен")
+
+        if not products:
+            raise InvalidOrderError("В заказе должны быть товары")
+
+        for product in products:
+            if product.quantity == 0:
+                raise InvalidOrderError(f"Товара '{product.name}' нет на складе")
+
+
         self.user = user
         self.products = products
         self.order_id = order_id
@@ -26,9 +39,27 @@ class Order:
 
     def get_product(self, product_name):
         for product in self.products:
-            if product == product_name:
+            if product.name == product_name:
                 return product
         raise KeyError("Товар не найден")
+
+
+    def get_summary(self) -> str:
+        """Краткая сводка заказа"""
+        product_names = ", ".join(p.name for p in self.products)
+        return f"Заказ #{self.order_id}: {len(self.products)} товаров ({product_names}), {self.total}р"
+
+
+    def process_order(self) -> bool:
+        """Обработка заказов (резервирование товаров)"""
+        try:
+            for product in self.products:
+                product.reserve_stock(1)
+            print(f"✅ Заказ #{self.order_id} успешно обработан!")
+            return True
+        except Exception as e:
+            print(f"❌ Ошибка обработки заказа #{self.order_id}: {e}")
+            return False
 
 
 # # Создаём пользователя
