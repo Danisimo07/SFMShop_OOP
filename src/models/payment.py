@@ -1,3 +1,4 @@
+from models.exceptions import ValidationError
 from abc import ABC, abstractmethod
 from re import fullmatch
 
@@ -7,6 +8,8 @@ from re import fullmatch
 """
 class Payment(ABC):
     def __init__(self, amount: float):
+        if amount < 0:
+            raise ValidationError("Сумма не может быть отрицательной")
         self._amount = amount
 
 
@@ -30,24 +33,25 @@ class Payment(ABC):
 class CardPayment(Payment):
     def __init__(self, amount: float, card_number: str):
         super().__init__(amount)
-        self._card_number = card_number
+        self.__card_number = card_number
 
 
-    @property
-    def card_number(self):
-        return self._card_number
+    # @property
+    # def card_number(self):
+    #     return self._card_number
 
 
-    @card_number.setter
-    def card_number(self, number: str):
-        if number.isdigit() and len(number) == 16:
-            return self._card_number
-        else:
-            "❌ Невозможно выполнить операцию"
+    # @card_number.setter
+    # def card_number(self, number: str):
+    #     if number.isdigit() and len(number) == 16:
+    #         return self._card_number
+    #     else:
+    #         "❌ Невозможно выполнить операцию"
 
 
     def process_payment(self) -> str:
-            return f"Оплата картой {self.card_number[-4:]}: {self._amount} руб."
+        last_4_numbers = self.__card_number[-4:]
+        return f"Оплата картой №{last_4_numbers}: {self._amount} руб."
 
 
 class PayPalPayment(Payment):
@@ -65,15 +69,15 @@ class PayPalPayment(Payment):
             return "❌ Email адрес не валиден"
 
 
-card = CardPayment(1000, "123456781234678")
-pay_pal = PayPalPayment(2000, "user@paypal.com")
+# card = CardPayment(1000, "123456781234678")
+# pay_pal = PayPalPayment(2000, "user@paypal.com")
 
 
-payments = [
-    card,
-    pay_pal
-]
+# payments = [
+#     card,
+#     pay_pal
+# ]
 
-for payment in payments:
-    result = payment.process_payment()
-    print(result)
+# for payment in payments:
+#     result = payment.process_payment()
+#     print(result)

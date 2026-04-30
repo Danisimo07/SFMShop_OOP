@@ -1,24 +1,32 @@
-from models.exceptions import InvalidOrderError
+from models.exceptions import InvalidOrderError, BusinessLogicError
 from models.product import Product
-# from models.user import User
+from models.user import User
 
 class Order:
-    def __init__(self, user: str, products: list[Product], order_id: int):
+    def __init__(self, user: User, products: list[Product], order_id: int):
         """Инициализация заказов с полной валидацией"""
-        if not user or len(user.strip()) == 0:
+        if not user:
             raise InvalidOrderError("Пользователь обязателен")
-
+        
         if not products:
-            raise InvalidOrderError("В заказе должны быть товары")
+            raise BusinessLogicError("В заказе должны быть товары")
 
-        for product in products:
-            if product.quantity == 0:
-                raise InvalidOrderError(f"Товара '{product.name}' нет на складе")
+        if not all(isinstance(p, Product) for p in products):
+            raise InvalidOrderError("Все элементы должны быть в Product")
 
 
         self.user = user
-        self.products = products
+        self.products = products[:]
         self.order_id = order_id
+        self.total = self.calculate_total()
+
+
+    def add_product(self, product):
+        if not isinstance(product, Product):
+            raise TypeError(f"Ожидался Product, получен {type(product).__name__}")
+        if product.quantity == 0:
+            raise InvalidOrderError(f"Товара '{product.name}' нет на складе")
+        self.products.append(product)
         self.total = self.calculate_total()
 
 

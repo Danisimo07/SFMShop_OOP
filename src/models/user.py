@@ -11,7 +11,21 @@ class User:
             raise ValidationError("Неверный формат email (требуется @ и домен)")
 
         self.name = name.strip()
-        self.email = email.lower()
+        self._email = email.lower()
+
+
+    def get_email(self):
+        return self._email
+
+
+    def set_email(self, email):
+        if "@" not in email and "." not in email.split("@")[1]:
+            return ValidationError("Неверный формат email")
+        self._email = email.lower()
+
+
+    def get_info(self):
+        return f"Пользователь: {self.name}; Email: {self._email}"
 
 
     def __str__(self):
@@ -20,7 +34,3 @@ class User:
 
     def __repr__(self):
         return f"User(name='{self.name}', email='{self.email}')"
-
-
-    def get_info(self):
-        return f"Пользователь: {self.name}; Email: {self.email}"
